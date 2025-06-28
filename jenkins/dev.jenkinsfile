@@ -14,7 +14,6 @@ pipeline {
     }
     environment {
         DOCKER_HUB_USERNAME="tchuinsu"
-        DOCKER_HUB_USERNAME="devopseasylearning"
         ALPHA_APPLICATION_01_REPO="alpha-application-01"
         ALPHA_APPLICATION_02_REPO="alpha-application-02"
         DOCKER_CREDENTIAL_ID = 'docker-hub-creds'
