@@ -40,6 +40,7 @@ pipeline {
         stage('Checking the code') {
             steps {
                 sh 'ls -l'
+                sh 'pwd'
             }
         }
     }
