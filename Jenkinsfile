@@ -31,7 +31,7 @@ pipeline {
                 steps {
                     script {
                         git credentialsId: 'github-auth',
-                            url: 'git@github.com:tchuinsu/s8-web-2-Tia.git',
+                            git url: 'https://github.com/tchuinsu/s8-web-2-Tia.git', branch: 's8coubis1',
                             branch: "${params.BRANCH_NAME}"
                     }
                 }
