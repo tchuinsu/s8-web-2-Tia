@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     triggers {
         githubPush()
     }
@@ -22,18 +22,24 @@ pipeline {
     }
 
     parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 's8coubis1', description: '')
-        string(name: 'APP1_TAG', defaultValue: 'latest', description: '')
-        string(name: 'APP2_TAG', defaultValue: 'latest', description: '')
-        string(name: 'PORT_ON_DOCKER_HOST', defaultValue: '', description: '')
+        string(name: 'BRANCH_NAME', defaultValue: 's8coubis1', description: 'Git branch to build')
+        string(name: 'APP1_TAG', defaultValue: 'latest', description: 'Tag for Application 01')
+        string(name: 'APP2_TAG', defaultValue: 'latest', description: 'Tag for Application 02')
+        string(name: 'PORT_APP1', defaultValue: '8081', description: 'Host port for App 01')
+        string(name: 'PORT_APP2', defaultValue: '8082', description: 'Host port for App 02')
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'github-auth',
-                    url: 'git@github.com:tchuinsu/s8-web-2-Tia.git',
-                    branch: "${params.BRANCH_NAME}"
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${params.BRANCH_NAME}"]],
+                    userRemoteConfigs: [[
+                        credentialsId: 'github-auth',
+                        url: 'git@github.com:tchuinsu/s8-web-2-Tia.git'
+                    ]]
+                ])
             }
         }
 
@@ -43,68 +49,53 @@ pipeline {
                 sh 'pwd'
             }
         }
-        stage('Building application 01') {
+
+        stage('Build Application 01') {
             steps {
-                script {
-                    sh """
-                        pwd
-                        ls -l
-                        docker build -t ${env.DOCKER_HUB_USERNAME}/app-01:${BUILD_NUMBER} -f application-01.Dockerfile .
-                        docker images
-                    """ 
-                }
+                sh """
+                    docker build -t ${env.DOCKER_HUB_USERNAME}/app-01:${BUILD_NUMBER} -f application-01.Dockerfile .
+                    docker images
+                """
             }
         }
-        stage('Building application 02') {
+
+        stage('Build Application 02') {
             steps {
-                script {
-                    sh """
-                        pwd
-                        ls -l
-                        docker build -t ${env.DOCKER_HUB_USERNAME}/app-02:${BUILD_NUMBER} -f application-02.Dockerfile .
-                        docker images
-                    """ 
-                }
+                sh """
+                    docker build -t ${env.DOCKER_HUB_USERNAME}/app-02:${BUILD_NUMBER} -f application-02.Dockerfile .
+                    docker images
+                """
             }
         }
-        stage('Login into') {
+
+        stage('Docker Hub Login') {
             steps {
-                script {
-                    // Login to Docker Hub
-                    withCredentials([usernamePassword(credentialsId: "docker-hub-creds", 
-                    usernameVariable: 'DOCKER_USERNAME', 
+                withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIAL_ID,
+                    usernameVariable: 'DOCKER_USERNAME',
                     passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Use Docker CLI to login
-                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                    }
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                 }
             }
         }
 
-        stage('Deploying the application 01') {
+        stage('Deploy Application 01') {
             steps {
-                script {
-                    sh """
-                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_1}:8081  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
-                        sleep 5
-                        docker ps 
-                    """ 
-                }
-            }
-        }
-        stage('Deploying the application 02') {
-            steps {
-                script {
-                    sh """
-                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_2}:8082  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
-                        sleep 5
-                        docker ps 
-                    """ 
-                }
+                sh """
+                    docker run -itd -p ${params.PORT_APP1}:8081 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
+                    sleep 5
+                    docker ps
+                """
             }
         }
 
+        stage('Deploy Application 02') {
+            steps {
+                sh """
+                    docker run -itd -p ${params.PORT_APP2}:8082 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
+                    sleep 5
+                    docker ps
+                """
+            }
+        }
     }
 }
-
-                        
