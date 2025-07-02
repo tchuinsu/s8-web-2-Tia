@@ -81,7 +81,7 @@ pipeline {
         stage('Deploy Application 01') {
             steps {
                 sh """
-                    docker run -itd -p ${params.PORT_APP1}:8081 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
+                    docker run -itd -p ${params.PORT_APP1}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
                     sleep 5
                     docker ps
                 """
@@ -91,7 +91,7 @@ pipeline {
         stage('Deploy Application 02') {
             steps {
                 sh """
-                    docker run -itd -p ${params.PORT_APP2}:8082 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
+                    docker run -itd -p ${params.PORT_APP2}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
                     sleep 5
                     docker ps
                 """
