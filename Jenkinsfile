@@ -85,7 +85,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_1}:80  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
+                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_1}:8081  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
                         sleep 5
                         docker ps 
                     """ 
@@ -96,7 +96,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_2}:80  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
+                        docker run -itd -p ${params.PORT_ON_DOCKER_HOST_APP_2}:8082  ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
                         sleep 5
                         docker ps 
                     """ 
