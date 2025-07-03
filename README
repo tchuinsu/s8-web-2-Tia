@@ -8,5 +8,5 @@ git push origin s8coubis1
 
 
 git add .
-git commit -m "jenkinsfile update" 
+git commit -m "jenkinsfile" 
 git push origin s8coubis1
