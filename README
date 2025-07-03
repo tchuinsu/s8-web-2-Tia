@@ -4,3 +4,9 @@ ok YTYTYTtttyyyfffftt
 git add .
 git commit -m "readme update" 
 git push origin s8coubis1
+
+
+
+git add .
+git commit -m "jenkinsfile update" 
+git push origin s8coubis1
