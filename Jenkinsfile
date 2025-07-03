@@ -27,6 +27,7 @@ pipeline {
         string(name: 'APP2_TAG', defaultValue: 'latest', description: 'Tag for Application 02')
         string(name: 'PORT_APP1', defaultValue: '8081', description: 'Host port for App 01')
         string(name: 'PORT_APP2', defaultValue: '8082', description: 'Host port for App 02')
+        string(name: 'PORT_ON_DOCKER_HOST', defaultValue: '', description: 'Port on Docker host')
     }
 
     stages {
