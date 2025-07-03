@@ -158,3 +158,18 @@ pipeline {
     }
 }
 
+def customFunction() {
+    sh """
+        ls -l
+        pwd
+        uptime
+    """
+}
+
+
+def sanity_check() {
+    if (params.BRANCH_NAME.isEmpty()){
+       echo "The parameter BRANCH_NAME is not set"
+       sh 'exit 2'
+   } 
+}
