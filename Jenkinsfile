@@ -129,12 +129,3 @@ pipeline {
     }
 }
 
-                    docker ps -a -q --filter "publish=${params.PORT_APP2}" | xargs -r docker rm
-                    docker run -itd --name app02 -p ${params.PORT_APP2}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
-                    sleep 5
-                    docker ps
-                """
-            }
-        }
-    }
-}
