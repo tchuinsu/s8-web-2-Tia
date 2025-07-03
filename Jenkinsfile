@@ -77,7 +77,24 @@ pipeline {
                 }
             }
         }
-
+        stage('Pushing application 01 into DockerHub') {
+            steps {
+                script {
+                    sh """
+                        docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
+                    """
+                }
+            }
+        }
+        stage('Pushing application 02 into DockerHub') {
+            steps {
+                script {
+                    sh """
+                      docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
+                  """
+              }
+          }
+      }
         stage('Deploy Application 01') {
             steps {
                 sh """
