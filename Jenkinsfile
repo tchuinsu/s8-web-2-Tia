@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('Checking the code') {
+        stage('Check Code Structure') {
             steps {
                 sh 'ls -l'
                 sh 'pwd'
@@ -53,7 +53,7 @@ pipeline {
         stage('Build Application 01') {
             steps {
                 sh """
-                    docker build -t ${env.DOCKER_HUB_USERNAME}/app-01:${BUILD_NUMBER} -f application-01.Dockerfile .
+                    docker build -t ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG} -f application-01.Dockerfile .
                     docker images
                 """
             }
@@ -62,7 +62,7 @@ pipeline {
         stage('Build Application 02') {
             steps {
                 sh """
-                    docker build -t ${env.DOCKER_HUB_USERNAME}/app-02:${BUILD_NUMBER} -f application-02.Dockerfile .
+                    docker build -t ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG} -f application-02.Dockerfile .
                     docker images
                 """
             }
@@ -70,31 +70,28 @@ pipeline {
 
         stage('Docker Hub Login') {
             steps {
-                withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIAL_ID,
+                withCredentials([usernamePassword(
+                    credentialsId: env.DOCKER_CREDENTIAL_ID,
                     usernameVariable: 'DOCKER_USERNAME',
-                    passwordVariable: 'DOCKER_PASSWORD')]) {
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
                     sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                 }
             }
         }
-        stage('Pushing application 01 into DockerHub') {
+
+        stage('Push Application 01 to DockerHub') {
             steps {
-                script {
-                    sh """
-                        docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
-                    """
-                }
+                sh "docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}"
             }
         }
-        stage('Pushing application 02 into DockerHub') {
+
+        stage('Push Application 02 to DockerHub') {
             steps {
-                script {
-                    sh """
-                      docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
-                  """
-              }
-          }
-      }
+                sh "docker push ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}"
+            }
+        }
+
         stage('Deploy Application 01') {
             steps {
                 sh """
