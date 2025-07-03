@@ -8,7 +8,7 @@ RUN rm -rf *
 COPY ./application-01 .
 
 # Expose port 80 to allow external access to the web server
-EXPOSE 8081
+EXPOSE 80
 
 # Start Apache when the container starts
 CMD ["apache2ctl", "-D", "FOREGROUND"]
