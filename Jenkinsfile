@@ -25,7 +25,7 @@ pipeline {
         string(name: 'BRANCH_NAME', defaultValue: 's8coubis1', description: 'Git branch to build')
         string(name: 'APP1_TAG', defaultValue: 'latest', description: 'Tag for Application 01')
         string(name: 'APP2_TAG', defaultValue: 'latest', description: 'Tag for Application 02')
-        string(name: 'PORT_APP1', defaultValue: '80', description: 'Host port for App 01')
+        string(name: 'PORT_APP1', defaultValue: '8081', description: 'Host port for App 01')
         string(name: 'PORT_APP2', defaultValue: '80', description: 'Host port for App 02')
     }
 
