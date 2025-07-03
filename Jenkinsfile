@@ -95,21 +95,40 @@ pipeline {
 
         stage('Deploy Application 01') {
             steps {
-                sh """
-                    docker ps -q --filter "publish=${params.PORT_APP1}" | xargs -r docker stop
-                    docker ps -a -q --filter "publish=${params.PORT_APP1}" | xargs -r docker rm
-                    docker run -itd --name app01 -p ${params.PORT_APP1}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
-                    sleep 5
-                    docker ps
-                """
+                script {
+                    sh """
+                        # Stop and remove container if it exists
+                        docker rm -f app01 || true
+        
+                        # Run new container
+                        docker run -itd --name app01 -p ${params.PORT_APP1}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_01_REPO}:${params.APP1_TAG}
+        
+                        docker ps
+                    """
+                }
             }
         }
 
 
+
         stage('Deploy Application 02') {
             steps {
-                sh """
-                    docker ps -q --filter "publish=${params.PORT_APP2}" | xargs -r docker stop
+                script {
+                    sh """
+                        # Stop and remove container if it exists
+                        docker rm -f app02 || true
+
+                        # Run new container
+                        docker run -itd --name app02 -p ${params.PORT_APP2}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
+
+                        docker ps
+                    """
+                }
+            }
+        }
+    }
+}
+
                     docker ps -a -q --filter "publish=${params.PORT_APP2}" | xargs -r docker rm
                     docker run -itd --name app02 -p ${params.PORT_APP2}:80 ${env.DOCKER_HUB_USERNAME}/${env.ALPHA_APPLICATION_02_REPO}:${params.APP2_TAG}
                     sleep 5
