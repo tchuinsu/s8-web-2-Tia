@@ -31,19 +31,48 @@ pipeline {
     }
 
     stages {
+        stage ('Check Allow Users') {
+            steps {
+                script {
+                    wrap([$class: 'BuildUser']) {
+                        def build_id = env.BUILD_USER_ID
+                        def build_user = env.BUILD_USER
+                        echo "build_id : $build_id"
+                        if (build_id in ['s8coubis1', 'admin']) {
+                            echo "Hi $build_user, You are allowed to run this job"
+                        } else {
+                            error "Hi $build_user, You are not allowed to run this job"
+                        }
+                    }
+                }
+            }
+        }
+        stage('Sanity Check') {
+            steps {
+                script {
+                    sanity_check()
+                }
+            }
+        }
+
         stage('Clone Repository') {
+            when {
+                expression {
+                    params.BRANCH_NAME == 's8coubis1'
+                }
+            }
             steps {
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: "*/${params.BRANCH_NAME}"]],
-                    userRemoteConfigs: [[
-                        credentialsId: 'github-auth',
-                        url: 'git@github.com:tchuinsu/s8-web-2-Tia.git'
-                    ]]
-                ])
+                        userRemoteConfigs: [[
+                            credentialsId: 'github-auth',
+                            url: 'git@github.com:tchuinsu/s8-web-2-Tia.git'
+                        ]]
+                    ])
+                }
             }
-        }
-
+    
         stage('Check Code Structure') {
             steps {
                 sh 'ls -l'
